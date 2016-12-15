@@ -23,6 +23,7 @@ class pe_databases::postgresql_settings (
                                                            false => "${::memory['system']['total_bytes'] / 1024 / 1024 / 3/ $autovacuum_max_workers}MB",
                                                            true  => "${::memory['system']['total_bytes'] / 1024 / 1024 / 8/ $autovacuum_max_workers}MB",
                                                          },
+  Boolean   $manage_index_settings                     = true,
 ) {
 
   $postgresql_service_resource_name = 'postgresqld'
@@ -130,5 +131,9 @@ class pe_databases::postgresql_settings (
 
   if $manage_reports_autovacuum_cost_delay {
     pe_databases::set_puppetdb_table_autovacuum_cost_delay_zero { 'reports' : }
+  }
+
+  if $manage_index_settings {
+    include pe_databases::postgresql_settings::index_settings
   }
 }
